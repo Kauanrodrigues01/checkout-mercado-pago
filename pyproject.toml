@@ -1,0 +1,19 @@
+[tool.ruff]
+line-length = 200
+extend-exclude = ['migrations', 'manage.py']
+
+[tool.ruff.lint]
+preview = true
+select = ['I', 'F', 'E', 'W', 'PL', 'PT']
+ignore = ['E501']  # Ignora o erro de linha muito longa
+
+[tool.ruff.format]
+preview = true
+quote-style = 'single'
+
+[tool.taskipy.tasks]
+lint = 'ruff check .'
+format = 'ruff check --fix && ruff format .'
+run = 'python manage.py runserver'
+test = 'pytest'
+post_test = 'coverage html'
