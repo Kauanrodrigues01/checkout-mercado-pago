@@ -98,19 +98,80 @@ class MercadoPagoService:
 
         return self.__create_payment(payload)
 
+    def pay_with_boleto(self, amount: float, payer_email: str, payer_first_name: str, payer_last_name: str, payer_cpf: str, payer_address: Dict[str, str], description: str = 'Pagamento', days_to_expire: int = 3):
+        """
+        Cria um pagamento via Boleto Bancário.
+        """
+        expiration_date = self.generate_payment_expiration_date(days=days_to_expire)
+
+        payload = {
+            'transaction_amount': float(amount),
+            'description': description,
+            'payment_method_id': 'bolbradesco',
+            'date_of_expiration': expiration_date,
+            'payer': {
+                'first_name': payer_first_name,
+                'last_name': payer_last_name,
+                'email': payer_email,
+                'identification': {
+                    'type': 'CPF',
+                    'number': payer_cpf
+                },
+                'address': {
+                    'zip_code': payer_address.get('zip_code'),
+                    'street_name': payer_address.get('street_name'),
+                    'street_number': payer_address.get('street_number'),
+                    'neighborhood': payer_address.get('neighborhood'),
+                    'city': payer_address.get('city'),
+                    'federal_unit': payer_address.get('federal_unit')
+                }
+            },
+            'external_reference': f'ID-BOLETO-{uuid.uuid4()}'
+        }
+
+        if self.__notification_url:
+            payload['notification_url'] = self.__notification_url
+
+        return self.__create_payment(payload)
+
 
 if __name__ == '__main__':
     mp_service = MercadoPagoService()
 
     # TEST PIX
+    # try:
+    #     response = mp_service.pay_with_pix(
+    #         amount=100.00,
+    #         payer_email='test_user_123@testuser.com',
+    #         payer_cpf='12345678909',
+    #         description='Teste de pagamento com Pix',
+    #     )
+    #     print("--- Resposta PIX ---")
+    #     print(response)
+    # except Exception as e:
+    #     print(f'Erro ao processar pagamento PIX: {e}')
+
+    # TEST BOLETO 📄
+    address_data = {
+        'zip_code': '01001-000',
+        'street_name': 'Praça da Sé',
+        'street_number': 's/n',
+        'neighborhood': 'Sé',
+        'city': 'São Paulo',
+        'federal_unit': 'SP'
+    }
+
     try:
-        response = mp_service.pay_with_pix(
-            amount=100.00,
-            payer_email='test_user_123@testuser.com',
+        response = mp_service.pay_with_boleto(
+            amount=150.75,
+            payer_email='test82281@gmail.com',
+            payer_first_name='Carlos',
+            payer_last_name='Junior',
             payer_cpf='12345678909',
-            description='Teste de pagamento com Pix',
+            payer_address=address_data,
+            description='Compra de teste com Boleto'
         )
-        print("--- Resposta PIX ---")
+        print("--- Resposta BOLETO ---")
         print(response)
     except Exception as e:
-        print(f'Erro ao processar pagamento PIX: {e}')
+        print(f'Erro ao processar pagamento com boleto: {e}')
