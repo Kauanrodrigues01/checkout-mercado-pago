@@ -12,6 +12,8 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 
 from pathlib import Path
 
+from decouple import config
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -120,3 +122,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+MP_PUBLIC_KEY = config('MP_PUBLIC_KEY', default=None)
+MP_ACCESS_TOKEN = config('MP_ACCESS_TOKEN', default=None)
+MP_BASE_API_URL = config('MP_BASE_API_URL', default='https://api.mercadopago.com')
