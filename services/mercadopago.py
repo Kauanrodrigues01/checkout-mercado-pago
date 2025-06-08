@@ -1,9 +1,10 @@
 import uuid
 from datetime import datetime, timedelta
-from typing import Dict, Optional
+from typing import Dict
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import requests
+
 from app.settings import settings
 
 
@@ -23,9 +24,9 @@ class MercadoPagoService:
         'rejected': 'O pagamento foi rejeitado (o usuário pode tentar pagar novamente).',
         'cancelled': 'O pagamento foi cancelado por uma das partes ou o prazo de pagamento expirou.',
         'refunded': 'O pagamento foi reembolsado ao usuário.',
-        'charged_back': 'Um chargeback foi aplicado no cartão de crédito do comprador.'
+        'charged_back': 'Um chargeback foi aplicado no cartão de crédito do comprador.',
     }
-    
+
     STATUS_DETAIL_MAP = {
         'unknown': 'Status desconhecido.',
         'accredited': 'Pagamento creditado.',
@@ -58,7 +59,7 @@ class MercadoPagoService:
         'rejected_insufficient_data': 'Rejeitado por falta de informações obrigatórias.',
         'rejected_by_bank': 'Operação recusada pelo banco.',
         'rejected_by_regulations': 'Pagamento recusado devido a regulamentações.',
-        'rejected_by_biz_rule': 'Pagamento recusado devido a regras de negócio.'
+        'rejected_by_biz_rule': 'Pagamento recusado devido a regras de negócio.',
     }
 
     def __init__(self):
@@ -72,7 +73,6 @@ class MercadoPagoService:
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {self._access_token}',
         }
-
 
     def generate_payment_expiration_date(self, days: int | None = None, hours: int | None = None, minutes: int | None = None):
         """
@@ -137,7 +137,7 @@ class MercadoPagoService:
         Cria um pagamento via Cartão de Crédito.
         """
         card_token = self._get_card_token(card_data)
-        
+
         payload = {
             'transaction_amount': float(amount),
             'token': card_token.get('id'),
@@ -175,7 +175,7 @@ class MercadoPagoService:
         """
         url = f'{self._base_url}{path}'
         headers = self._headers.copy()
-        
+
         if use_idempotency_key:
             headers['X-Idempotency-Key'] = str(uuid.uuid4())
 
@@ -201,7 +201,7 @@ class MercadoPagoService:
         """
         if self._notification_url:
             payload['notification_url'] = self._notification_url
-            
+
         return self._post('/v1/payments', payload)
 
 
@@ -253,11 +253,8 @@ def run_test_pay_with_card():
             'security_code': '143',
             'cardholder': {
                 # 'name': 'Test User', # Se usar este vai ser aprovado, com as credenciais de teste do Mercado Pago
-                'name': 'Other User', # Se usar este vai ser reprovado, com as credenciais de teste do Mercado Pago
-                'identification': {
-                    'type': 'CPF',
-                    'number': '12345678909'
-                }
+                'name': 'Other User',  # Se usar este vai ser reprovado, com as credenciais de teste do Mercado Pago
+                'identification': {'type': 'CPF', 'number': '12345678909'},
             },
         }
 
