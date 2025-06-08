@@ -55,7 +55,7 @@ Siga os passos abaixo para rodar a aplicação em sua máquina.
 
 1.  **Clone o repositório:**
     ```sh
-    git clone [https://github.com/Kauanrodrigues01/integracao-pagamento-mercado-pago.git](https://github.com/Kauanrodrigues01/integracao-pagamento-mercado-pago.git)
+    git clone [https://github.com/Kauanrodrigues01/integracao-pagamento-mercado-pago.git](https://github.com/Kauanrodrigues01/checkout-mercado-pago.git)
     ```
 
 2.  **Acesse o diretório do projeto:**
