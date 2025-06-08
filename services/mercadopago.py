@@ -4,13 +4,7 @@ from typing import Dict, Optional
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import requests
-from decouple import config
-
-# --- Configurações ---
-MP_ACCESS_TOKEN = config('MP_ACCESS_TOKEN', default=None)
-MP_BASE_API_URL = config('MP_BASE_API_URL', default='https://api.mercadopago.com')
-NOTIFICATION_URL = config('NOTIFICATION_URL', default=None)
-DEFAULT_TIMEZONE = config('TIMEZONE', default='America/Sao_Paulo')
+from app.settings import settings
 
 
 class MercadoPagoService:
@@ -68,27 +62,26 @@ class MercadoPagoService:
     }
 
     def __init__(self):
-        if not MP_ACCESS_TOKEN:
+        if not settings.MP_ACCESS_TOKEN:
             raise ValueError('A variável de ambiente MP_ACCESS_TOKEN não foi definida.')
 
-        self._access_token = MP_ACCESS_TOKEN
-        self._base_url = MP_BASE_API_URL
-        self._notification_url = NOTIFICATION_URL
+        self._access_token = settings.MP_ACCESS_TOKEN
+        self._base_url = settings.MP_BASE_API_URL
+        self._notification_url = settings.NOTIFICATION_URL
         self._headers = {
             'Content-Type': 'application/json',
             'Authorization': f'Bearer {self._access_token}',
         }
 
-    # --- Métodos Públicos ---
 
-    def generate_payment_expiration_date(self, days: Optional[int] = None, hours: Optional[int] = None, minutes: Optional[int] = None):
+    def generate_payment_expiration_date(self, days: int | None = None, hours: int | None = None, minutes: int | None = None):
         """
         Gera uma data de expiração no formato ISO 8601 com base no fuso horário configurado.
         """
         try:
-            timezone = ZoneInfo(DEFAULT_TIMEZONE)
+            timezone = ZoneInfo(settings.DEFAULT_TIMEZONE)
         except ZoneInfoNotFoundError:
-            raise ValueError(f'Timezone "{DEFAULT_TIMEZONE}" não encontrado. Verifique a configuração.')
+            raise ValueError(f'Timezone "{settings.DEFAULT_TIMEZONE}" não encontrado. Verifique a configuração.')
 
         current_time = datetime.now(timezone)
         time_delta = timedelta(days=days or 0, hours=hours or 0, minutes=minutes or 0)
