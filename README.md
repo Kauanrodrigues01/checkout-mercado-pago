@@ -28,16 +28,12 @@ O projeto simula um checkout básico, onde o usuário pode escolher o método de
 
 ## 🛠️ Tecnologias Utilizadas
 
-* **Backend:**
-    * [Python 3](https://www.python.org/)
-    * [FastAPI](https://fastapi.tiangolo.com/)
-    * [Uvicorn](https://www.uvicorn.org/)
-* **Frontend & Templating:**
-    * [HTML5](https://developer.mozilla.org/pt-BR/docs/Web/HTML)
-    * [Jinja2](https://jinja.palletsprojects.com/en/3.1.x/)
-* **Dependências Principais:**
-    * [Requests](https://requests.readthedocs.io/en/latest/): Para realizar as chamadas HTTP à API.
-    * [pydantic-settings](https://pypi.org/project/pydantic-settings/): Para gerenciar as variáveis de ambiente de forma segura.
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-563D7C?style=for-the-badge&logo=bootstrap&logoColor=white)
+![Chart.js](https://img.shields.io/badge/Chart.js-FF6384?style=for-the-badge&logo=Chart.js&logoColor=white)
 
 ---
 
