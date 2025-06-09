@@ -28,16 +28,15 @@ O projeto simula um checkout básico, onde o usuário pode escolher o método de
 
 ## 🛠️ Tecnologias Utilizadas
 
-* **Backend:**
-    * [Python 3](https://www.python.org/)
-    * [FastAPI](https://fastapi.tiangolo.com/)
-    * [Uvicorn](https://www.uvicorn.org/)
-* **Frontend & Templating:**
-    * [HTML5](https://developer.mozilla.org/pt-BR/docs/Web/HTML)
-    * [Jinja2](https://jinja.palletsprojects.com/en/3.1.x/)
-* **Dependências Principais:**
-    * [Requests](https://requests.readthedocs.io/en/latest/): Para realizar as chamadas HTTP à API.
-    * [pydantic-settings](https://pypi.org/project/pydantic-settings/): Para gerenciar as variáveis de ambiente de forma segura.
+![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![SQLalchemy](https://img.shields.io/badge/sqlalchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)
+![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
+![Jinja](https://img.shields.io/badge/-Jinja-4B0082?logo=jinja&logoColor=white&style=flat)
+![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
 ---
 
@@ -55,7 +54,7 @@ Siga os passos abaixo para rodar a aplicação em sua máquina.
 
 1.  **Clone o repositório:**
     ```sh
-    git clone [https://github.com/Kauanrodrigues01/integracao-pagamento-mercado-pago.git](https://github.com/Kauanrodrigues01/integracao-pagamento-mercado-pago.git)
+    git clone [https://github.com/Kauanrodrigues01/integracao-pagamento-mercado-pago.git](https://github.com/Kauanrodrigues01/checkout-mercado-pago.git)
     ```
 
 2.  **Acesse o diretório do projeto:**
