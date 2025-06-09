@@ -145,8 +145,18 @@
         const payload = {};
         new FormData(form).forEach((value, key) => payload[key] = value);
 
+        // Define a URL correta de acordo com o método de pagamento
+        let url = '/payments/checkout';
+        if (payload.payment_method === 'pix') {
+          url = '/payments/checkout/pix';
+        } else if (payload.payment_method === 'boleto') {
+          url = '/payments/checkout/boleto';
+        } else if (payload.payment_method === 'card') {
+          url = '/payments/checkout/card';
+        }
+
         try {
-          const res = await fetch('/checkout', {
+          const res = await fetch(url, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

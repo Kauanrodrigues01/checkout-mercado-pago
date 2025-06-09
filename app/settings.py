@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     MP_BASE_API_URL: str = 'https://api.mercadopago.com'
     NOTIFICATION_URL: str = 'https://yourdomain.com/notifications'
     DEFAULT_TIMEZONE: str = 'America/Sao_Paulo'
+    DATABASE_URL: str = 'sqlite:///./database.db'
 
 
 settings = Settings()
