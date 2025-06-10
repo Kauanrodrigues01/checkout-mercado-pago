@@ -15,6 +15,9 @@ router = APIRouter(prefix='/payments', tags=['payments'])
 
 @router.post('/checkout/pix')
 async def checkout_pix(data: PixPaymentSchema, session: T_Session):
+    """
+    Endpoint responsável por processar pagamentos com PIX via Mercado Pago.
+    """
     try:
         response = mp.pay_with_pix(
             amount=data.transaction_amount,
@@ -41,6 +44,9 @@ async def checkout_pix(data: PixPaymentSchema, session: T_Session):
 
 @router.post('/checkout/boleto')
 async def checkout_boleto(data: BoletoPaymentSchema, session: T_Session):
+    """
+    Endpoint responsável por processar pagamentos com boleto via Mercado Pago.
+    """
     try:
         address_data = {
             'zip_code': data.zip_code,
@@ -78,6 +84,9 @@ async def checkout_boleto(data: BoletoPaymentSchema, session: T_Session):
 
 @router.post('/checkout/card')
 async def checkout_card(data: CardPaymentSchema, session: T_Session):
+    """
+    Endpoint responsável por processar pagamentos com cartão de crédito via Mercado Pago.
+    """
     try:
         card_data = {
             'card_number': data.card_number,
@@ -125,7 +134,7 @@ async def checkout_card(data: CardPaymentSchema, session: T_Session):
 
 
 @router.post('/notification')
-async def checkout_notification(request: Request, session: T_Session):
+async def payment_notification(request: Request, session: T_Session):
     """
     Endpoint responsável por receber notificações do Mercado Pago sobre o status dos pagamentos.
     """
@@ -168,6 +177,9 @@ async def checkout_notification(request: Request, session: T_Session):
 
 @router.get('/list', response_model=list[PaymentPublicSchema])
 async def list_payments(session: T_Session):
+    """
+    Endpoint para listar todos os pagamentos.
+    """
     payments = (await session.scalars(
         select(Payment)
     )).all()
@@ -177,6 +189,9 @@ async def list_payments(session: T_Session):
 
 @router.delete('/delete/{payment_id}', status_code=status.HTTP_204_NO_CONTENT)
 async def delete_payment(session: T_Session, payment_id):
+    """
+    Endpoint para deletar um pagamento específico.
+    """
     payment = await session.scalar(select(Payment).where(Payment.id == int(payment_id)))
     await session.delete(payment)
     await session.commit()
