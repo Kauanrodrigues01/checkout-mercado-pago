@@ -21,8 +21,29 @@ O projeto simula um checkout básico, onde o usuário pode escolher o método de
 * **Pagamento com PIX:** Geração de QR Code e código "Copia e Cola" com tempo de expiração.
 * **Pagamento com Boleto Bancário:** Geração de boleto com informações do pagador e data de vencimento.
 * **Pagamento com Cartão de Crédito:** Processamento de pagamento com validação de dados do cartão, incluindo nome do titular e CPF.
+* **Notificações via Webhooks:** Endpoint dedicado para receber e processar notificações do Mercado Pago, atualizando o status do pagamento (aprovado, recusado, cancelado) em tempo real no banco de dados.
 * **Interface Web Simples:** Um frontend básico criado com HTML e Jinja2 para interagir com o backend.
 * **Serviço Modular:** A lógica de comunicação com o Mercado Pago está encapsulada na classe `MercadoPagoService`, facilitando a manutenção e o reuso do código.
+
+## 🎣 Webhooks: Recebendo Notificações em Tempo Real
+
+Uma das funcionalidades cruciais deste projeto é a capacidade de receber notificações via **webhooks do Mercado Pago**. Isso permite que nossa aplicação seja informada sobre atualizações nos pagamentos de forma **assíncrona** e **imediata**.
+
+### Como funciona?
+
+#### 1. Configuração
+Uma URL da nossa aplicação é registrada na plataforma do **Mercado Pago** como um **endpoint de webhook**.
+
+#### 2. Notificação
+Quando um evento ocorre (ex: um cliente paga um boleto ou um pagamento de cartão é aprovado), o **Mercado Pago envia uma notificação** (um `POST` request) para essa URL.
+
+#### 3. Processamento
+A aplicação:
+- recebe a notificação,
+- verifica sua autenticidade,
+- utiliza os dados para **atualizar o status do pagamento** correspondente no banco de dados.
+
+✅ Esse mecanismo garante que o **status dos pagamentos** em nosso sistema esteja **sempre sincronizado** com o Mercado Pago, **sem a necessidade de consultar a API repetidamente**.
 
 ---
 
@@ -86,6 +107,9 @@ Siga os passos abaixo para rodar a aplicação em sua máquina.
     MP_PUBLIC_KEY=your-public-key-here
     MP_ACCESS_TOKEN=your-access-token-here
     MP_BASE_API_URL=https://api.mercadopago.com
+    DEFAULT_TIMEZONE=America/Fortaleza
+    NOTIFICATION_URL=https://your-domain.com.br/api/notifications
+    DATABASE_URL=postgresql+asyncpg://admin:senha123@localhost:5432/meubanco
     ```
 
 6.  **Inicie o servidor local:**
@@ -96,8 +120,3 @@ Siga os passos abaixo para rodar a aplicação em sua máquina.
 7.  Abra seu navegador e acesse [http://127.0.0.1:8000](http://127.0.0.1:8000) para ver a aplicação funcionando.
 
 ---
-
-## 👨‍💻 Autor
-
-[![LinkedIn](https://img.shields.io/badge/linkedin-%230077B5.svg?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/kauan-rodrigues-lima/)
-[![GitHub](https://img.shields.io/badge/github-%23121011.svg?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Kauanrodrigues01)
