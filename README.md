@@ -1,10 +1,14 @@
 # Integração de Pagamentos com Mercado Pago 💳
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/Kauanrodrigues01/Kauanrodrigues01/refs/heads/main/images/projetos/checkout-mercado-pago/checkout-cartao.png" width="32%">
-  <img src="https://raw.githubusercontent.com/Kauanrodrigues01/Kauanrodrigues01/refs/heads/main/images/projetos/checkout-mercado-pago/tela-mp-pix.png" width="32%">
-  <img src="https://raw.githubusercontent.com/Kauanrodrigues01/Kauanrodrigues01/refs/heads/main/images/projetos/checkout-mercado-pago/checkout-boleto.png" width="32%">
+  <img src="https://raw.githubusercontent.com/Kauanrodrigues01/Kauanrodrigues01/refs/heads/main/images/projetos/checkout-mercado-pago/checkout-cartao.png" width="49%">
+  <img src="https://raw.githubusercontent.com/Kauanrodrigues01/Kauanrodrigues01/refs/heads/main/images/projetos/checkout-mercado-pago/tela-mp-pix.png" width="49%">
 </p>
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/Kauanrodrigues01/Kauanrodrigues01/refs/heads/main/images/projetos/checkout-mercado-pago/docs.png" width="60%">
+</p>
+
 
 Um projeto de estudo focado na integração de diferentes métodos de pagamento (PIX, Boleto e Cartão de Crédito) através da API do Mercado Pago, utilizando **FastAPI** como backend e **Jinja2** para a renderização de templates HTML.
 
