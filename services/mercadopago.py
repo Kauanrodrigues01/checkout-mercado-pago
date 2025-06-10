@@ -100,6 +100,7 @@ class MercadoPagoService:
             'date_of_expiration': self.generate_payment_expiration_date(minutes=30),
             'payer': {'email': payer_email, 'identification': {'type': 'CPF', 'number': payer_cpf}},
             'external_reference': f'ID-PIX-{uuid.uuid4()}',
+            'notification_url': settings.NOTIFICATION_URL
         }
         return self._create_payment(payload)
 
@@ -129,6 +130,7 @@ class MercadoPagoService:
                 },
             },
             'external_reference': f'ID-BOLETO-{uuid.uuid4()}',
+            'notification_url': settings.NOTIFICATION_URL,
         }
         return self._create_payment(payload)
 
@@ -146,8 +148,16 @@ class MercadoPagoService:
             'payer': {'email': payer_email, 'identification': {'type': 'CPF', 'number': payer_cpf}},
             'external_reference': f'ID-CARTAO-{uuid.uuid4()}',
             'statement_descriptor': 'Compra Online',
+            'notification_url': settings.NOTIFICATION_URL,
         }
         return self._create_payment(payload)
+
+    def get_payment_info(self, transiction_id: str):
+        """
+        Obtém informações detalhadas sobre um pagamento específico.
+        """
+        url = f'{self._base_url}/v1/payments/{transiction_id}'
+        return self._get(url)
 
     # --- Métodos Internos Auxiliares ---
 
@@ -186,6 +196,25 @@ class MercadoPagoService:
         except requests.HTTPError:
             error_message = self._handle_api_error(response)
             raise RuntimeError(error_message)
+
+        return response.json()
+
+    def _get(self, path: str):
+        """
+        Executa uma requisição GET para a API do Mercado Pago.
+        """
+        url = f'{self._base_url}{path}'
+        response = requests.get(url, headers=self._headers)
+
+        try:
+            response.raise_for_status()
+        except requests.HTTPError as e:
+            try:
+                error = response.json()
+            except Exception:
+                error = response.text
+
+            raise RuntimeError(f'Erro ao acessar {url}: {error}')
 
         return response.json()
 

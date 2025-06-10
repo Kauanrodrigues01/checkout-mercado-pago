@@ -124,8 +124,46 @@ async def checkout_card(data: CardPaymentSchema, session: T_Session):
         raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e))
 
 
-# @router.post('/notification')
-# async def checkout()
+@router.post('/notification')
+async def checkout_notification(request: Request, session: T_Session):
+    """
+    Endpoint responsável por receber notificações do Mercado Pago sobre o status dos pagamentos.
+    """
+    data = await request.json()
+    action = data.get('action')
+    transiction_id = data.get('data', {}).get('id')
+
+    if action == 'payment.updated':
+        try:
+            payment_info = mp.get_payment_info(transiction_id)
+            status = payment_info.get('status')
+            status_detail = payment_info.get('status_detail')
+            payment = await session.scalar(
+                select(Payment).where(Payment.transaction_id == str(transiction_id))
+            )
+            
+            if not payment:
+                return JSONResponse(
+                    {'message': 'Payment not found.'}, status_code=status.HTTP_404_NOT_FOUND
+                )
+
+            if status == 'approved' and status_detail == 'accredited':
+                payment.payment_status = PaymentStatus.PAID
+                await session.commit()
+                return JSONResponse({'message': 'Payment updated successfully.'}, status_code=status.HTTP_200_OK)
+                
+            elif status == 'rejected':
+                payment.payment_status = PaymentStatus.FAILED
+                await session.commit()
+                return JSONResponse({'message': 'Payment updated successfully.'}, status_code=status.HTTP_200_OK)
+            
+            elif status == 'pending':
+                payment.payment_status = PaymentStatus.CANCELLED
+                await session.commit()
+                return JSONResponse({'message': 'Payment updated successfully.'}, status_code=status.HTTP_200_OK)
+
+        except Exception as e:
+            raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e))
 
 
 @router.get('/list', response_model=list[PaymentPublicSchema])
