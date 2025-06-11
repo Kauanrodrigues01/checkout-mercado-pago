@@ -7,3 +7,4 @@ sqlalchemy==2.0.41
 alembic==1.16.1
 psycopg[binary]==3.2.7
 asyncpg==0.30.0
+ujson==5.10.0

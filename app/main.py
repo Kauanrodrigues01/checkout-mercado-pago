@@ -1,3 +1,4 @@
+import ujson
 from fastapi import FastAPI, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
@@ -6,7 +7,9 @@ from payments.router import router
 
 app = FastAPI(
     title='Checkout Mercado Pago',
-    description='Fazendo integração com a API do Mercado Pago'
+    description='Fazendo integração com a API do Mercado Pago',
+    json_loads=ujson.loads,
+    json_dumps=ujson.dumps,
 )
 app.include_router(router)
 
