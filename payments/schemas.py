@@ -1,4 +1,5 @@
 from typing import Annotated
+
 from pydantic import BaseModel, EmailStr, StringConstraints
 
 from payments.models import PaymentMethod, PaymentStatus
@@ -23,10 +24,12 @@ UFStr = Annotated[str, StringConstraints(min_length=2, max_length=2)]
 class PaymentBaseSchema(BaseModel):
     payer_email: EmailStr
     transaction_amount: float
-    description: str = "Pagamento via Mercado Pago"
+    description: str = 'Pagamento via Mercado Pago'
+
 
 class PixPaymentSchema(PaymentBaseSchema):
     payer_cpf: CPFStr
+
 
 class BoletoPaymentSchema(PaymentBaseSchema):
     payer_first_name: str

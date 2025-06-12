@@ -1,9 +1,10 @@
+import json
 import uuid
 from datetime import datetime, timedelta
 from typing import Dict
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
-import requests
+import httpx
 
 from app.settings import settings
 
@@ -89,7 +90,7 @@ class MercadoPagoService:
 
         return expiration_date.isoformat(timespec='milliseconds')
 
-    def pay_with_pix(self, amount: float, payer_email: str, payer_cpf: str, description: str = 'Pagamento'):
+    async def pay_with_pix(self, amount: float, payer_email: str, payer_cpf: str, description: str = 'Pagamento'):
         """
         Cria um pagamento via Pix.
         """
@@ -100,11 +101,11 @@ class MercadoPagoService:
             'date_of_expiration': self.generate_payment_expiration_date(minutes=30),
             'payer': {'email': payer_email, 'identification': {'type': 'CPF', 'number': payer_cpf}},
             'external_reference': f'ID-PIX-{uuid.uuid4()}',
-            'notification_url': settings.NOTIFICATION_URL
+            'notification_url': settings.NOTIFICATION_URL,
         }
-        return self._create_payment(payload)
+        return await self._create_payment(payload)
 
-    def pay_with_boleto(
+    async def pay_with_boleto(
         self, amount: float, payer_email: str, payer_first_name: str, payer_last_name: str, payer_cpf: str, payer_address: Dict[str, str], description: str = 'Pagamento', days_to_expire: int = 3
     ):
         """
@@ -132,13 +133,13 @@ class MercadoPagoService:
             'external_reference': f'ID-BOLETO-{uuid.uuid4()}',
             'notification_url': settings.NOTIFICATION_URL,
         }
-        return self._create_payment(payload)
+        return await self._create_payment(payload)
 
-    def pay_with_card(self, amount: float, payer_email: str, payer_cpf: str, card_data: dict, installments: int = 1, description: str = 'Pagamento'):
+    async def pay_with_card(self, amount: float, payer_email: str, payer_cpf: str, card_data: dict, installments: int = 1, description: str = 'Pagamento'):
         """
         Cria um pagamento via Cartão de Crédito.
         """
-        card_token = self._get_card_token(card_data)
+        card_token = await self._get_card_token(card_data)
 
         payload = {
             'transaction_amount': float(amount),
@@ -150,18 +151,17 @@ class MercadoPagoService:
             'statement_descriptor': 'Compra Online',
             'notification_url': settings.NOTIFICATION_URL,
         }
-        return self._create_payment(payload)
+        return await self._create_payment(payload)
 
-    def get_payment_info(self, transiction_id: str):
+    async def get_payment_info(self, transiction_id: str):
         """
         Obtém informações detalhadas sobre um pagamento específico.
         """
-        url = f'{self._base_url}/v1/payments/{transiction_id}'
-        return self._get(url)
+        return await self._get(f'/v1/payments/{transiction_id}')
 
     # --- Métodos Internos Auxiliares ---
 
-    def _handle_api_error(self, response: requests.Response):
+    def _handle_api_error(self, response: httpx.Response):
         """
         Processa uma resposta de erro da API, enriquecendo a mensagem com os mapeamentos de status.
         """
@@ -176,10 +176,10 @@ class MercadoPagoService:
 
             return f'Erro na API do Mercado Pago ({status_code}): {status_map_message} - {status_detail_map_message}'
 
-        except (requests.JSONDecodeError, IndexError):
+        except Exception:
             return f'Erro na API do Mercado Pago ({status_code}): {response.text}'
 
-    def _post(self, path: str, payload: dict, use_idempotency_key: bool = True):
+    async def _post(self, path: str, payload: dict, use_idempotency_key: bool = True):
         """
         Executa uma requisição POST para a API do Mercado Pago.
         """
@@ -189,49 +189,48 @@ class MercadoPagoService:
         if use_idempotency_key:
             headers['X-Idempotency-Key'] = str(uuid.uuid4())
 
-        response = requests.post(url, headers=headers, json=payload)
+        async with httpx.AsyncClient() as client:
+            try:
+                response = await client.post(url=url, headers=headers, json=payload)
+                response.raise_for_status()
+                return response.json()
+            except httpx.HTTPStatusError as e:
+                error_message = self._handle_api_error(e.response)
+                raise RuntimeError(error_message)
 
-        try:
-            response.raise_for_status()
-        except requests.HTTPError:
-            error_message = self._handle_api_error(response)
-            raise RuntimeError(error_message)
-
-        return response.json()
-
-    def _get(self, path: str):
+    async def _get(self, path: str):
         """
         Executa uma requisição GET para a API do Mercado Pago.
         """
         url = f'{self._base_url}{path}'
-        response = requests.get(url, headers=self._headers)
 
-        try:
-            response.raise_for_status()
-        except requests.HTTPError as e:
+        async with httpx.AsyncClient() as client:
             try:
-                error = response.json()
-            except Exception:
-                error = response.text
+                response = await client.get(url, headers=self._headers)
+                response.raise_for_status()
+                return response.json()
+            except httpx.HTTPStatusError as e:
+                try:
+                    error = e.response.json()
+                except json.JSONDecodeError:
+                    error = e.response.text
 
-            raise RuntimeError(f'Erro ao acessar {url}: {error}')
+                raise RuntimeError(f'Erro ao acessar {url}: {error}')
 
-        return response.json()
-
-    def _get_card_token(self, card_data: dict):
+    async def _get_card_token(self, card_data: dict):
         """
         Obtém um token de cartão de crédito.
         """
-        return self._post('/v1/card_tokens', card_data, use_idempotency_key=False)
+        return await self._post('/v1/card_tokens', card_data, use_idempotency_key=False)
 
-    def _create_payment(self, payload: dict):
+    async def _create_payment(self, payload: dict):
         """
         Cria um novo pagamento, adicionando a URL de notificação se configurada.
         """
         if self._notification_url:
             payload['notification_url'] = self._notification_url
 
-        return self._post('/v1/payments', payload)
+        return await self._post('/v1/payments', payload)
 
 
 def run_test_pay_with_pix():

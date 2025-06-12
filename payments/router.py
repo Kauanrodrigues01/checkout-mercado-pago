@@ -1,17 +1,16 @@
-from fastapi import APIRouter, Request, HTTPException, status
+from fastapi import APIRouter, HTTPException, Request, status
 from fastapi.responses import JSONResponse
-
-from services.mercadopago import MercadoPagoService
-
 from sqlalchemy import select
 
 from app.dependencies import T_Session
 from payments.models import Payment, PaymentMethod, PaymentStatus
-from payments.schemas import PaymentPublicSchema, CardPaymentSchema, BoletoPaymentSchema, PixPaymentSchema
+from payments.schemas import BoletoPaymentSchema, CardPaymentSchema, PaymentPublicSchema, PixPaymentSchema
+from services.mercadopago import MercadoPagoService
 
 mp = MercadoPagoService()
 
 router = APIRouter(prefix='/payments', tags=['payments'])
+
 
 @router.post('/checkout/pix')
 async def checkout_pix(data: PixPaymentSchema, session: T_Session):
@@ -19,18 +18,14 @@ async def checkout_pix(data: PixPaymentSchema, session: T_Session):
     Endpoint responsável por processar pagamentos com PIX via Mercado Pago.
     """
     try:
-        response = mp.pay_with_pix(
+        response = await mp.pay_with_pix(
             amount=data.transaction_amount,
             description=data.description,
             payer_email=data.payer_email,
             payer_cpf=data.payer_cpf,
         )
 
-        payment = Payment(
-            amount=data.transaction_amount,
-            payment_method=PaymentMethod.PIX,
-            transaction_id=str(response.get('id'))
-        )
+        payment = Payment(amount=data.transaction_amount, payment_method=PaymentMethod.PIX, transaction_id=str(response.get('id')))
         session.add(payment)
         await session.commit()
         await session.refresh(payment)
@@ -57,7 +52,7 @@ async def checkout_boleto(data: BoletoPaymentSchema, session: T_Session):
             'federal_unit': data.federal_unit,
         }
 
-        response = mp.pay_with_boleto(
+        response = await mp.pay_with_boleto(
             amount=data.transaction_amount,
             description=data.description,
             payer_email=data.payer_email,
@@ -67,11 +62,7 @@ async def checkout_boleto(data: BoletoPaymentSchema, session: T_Session):
             payer_address=address_data,
         )
 
-        payment = Payment(
-            amount=data.transaction_amount,
-            payment_method=PaymentMethod.BOLETO,
-            transaction_id=str(response.get('id'))
-        )
+        payment = Payment(amount=data.transaction_amount, payment_method=PaymentMethod.BOLETO, transaction_id=str(response.get('id')))
         session.add(payment)
         await session.commit()
         await session.refresh(payment)
@@ -99,7 +90,7 @@ async def checkout_card(data: CardPaymentSchema, session: T_Session):
             },
         }
 
-        response = mp.pay_with_card(
+        response = await mp.pay_with_card(
             amount=data.transaction_amount,
             description=data.description,
             payer_email=data.payer_email,
@@ -107,14 +98,10 @@ async def checkout_card(data: CardPaymentSchema, session: T_Session):
             installments=data.installments,
             card_data=card_data,
         )
-        
+
         status = response.get('status')
 
-        payment = Payment(
-            amount=data.transaction_amount,
-            payment_method=PaymentMethod.CREDIT_CARD,
-            transaction_id=str(response.get('id'))
-        )
+        payment = Payment(amount=data.transaction_amount, payment_method=PaymentMethod.CREDIT_CARD, transaction_id=str(response.get('id')))
 
         if status == 'approved':
             payment.payment_status = PaymentStatus.PAID
@@ -144,32 +131,25 @@ async def payment_notification(request: Request, session: T_Session):
 
     if action == 'payment.updated':
         try:
-            payment_info = mp.get_payment_info(transiction_id)
+            payment_info = await mp.get_payment_info(transiction_id)
             status = payment_info.get('status')
             status_detail = payment_info.get('status_detail')
-            payment = await session.scalar(
-                select(Payment).where(Payment.transaction_id == str(transiction_id))
-            )
-            
+            payment = await session.scalar(select(Payment).where(Payment.transaction_id == str(transiction_id)))
+
             if not payment:
-                return JSONResponse(
-                    {'message': 'Payment not found.'}, status_code=status.HTTP_404_NOT_FOUND
-                )
+                return JSONResponse({'message': 'Payment not found.'}, status_code=status.HTTP_404_NOT_FOUND)
 
             if status == 'approved' and status_detail == 'accredited':
                 payment.payment_status = PaymentStatus.PAID
-                await session.commit()
-                return JSONResponse({'message': 'Payment updated successfully.'}, status_code=status.HTTP_200_OK)
-                
             elif status == 'rejected':
                 payment.payment_status = PaymentStatus.FAILED
-                await session.commit()
-                return JSONResponse({'message': 'Payment updated successfully.'}, status_code=status.HTTP_200_OK)
-            
-            elif status == 'pending':
+            elif status == 'cancelled':
                 payment.payment_status = PaymentStatus.CANCELLED
-                await session.commit()
-                return JSONResponse({'message': 'Payment updated successfully.'}, status_code=status.HTTP_200_OK)
+            else:
+                payment.payment_status = PaymentStatus.PENDING
+
+            await session.commit()
+            return JSONResponse({'message': 'Payment updated successfully.'}, status_code=status.HTTP_200_OK)
 
         except Exception as e:
             raise HTTPException(status_code=status.HTTP_502_BAD_GATEWAY, detail=str(e))
@@ -180,10 +160,8 @@ async def list_payments(session: T_Session):
     """
     Endpoint para listar todos os pagamentos.
     """
-    payments = (await session.scalars(
-        select(Payment)
-    )).all()
-    
+    payments = (await session.scalars(select(Payment))).all()
+
     return payments
 
 
