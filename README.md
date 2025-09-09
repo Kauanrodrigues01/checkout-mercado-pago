@@ -1,4 +1,9 @@
-# Integração de Pagamentos com Mercado Pago 💳
+# 💳 Checkout Mercado Pago
+
+![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.115.12-green.svg)
+![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0.41-red.svg)
+![License](https://img.shields.io/badge/License-MIT-yellow.svg)
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Kauanrodrigues01/Kauanrodrigues01/refs/heads/main/images/projetos/checkout-mercado-pago/checkout-cartao.png" width="49%">
@@ -9,25 +14,56 @@
   <img src="https://raw.githubusercontent.com/Kauanrodrigues01/Kauanrodrigues01/refs/heads/main/images/projetos/checkout-mercado-pago/docs.png" width="60%">
 </p>
 
+## 📋 Sobre o Projeto
 
-Um projeto de estudo focado na integração de diferentes métodos de pagamento (PIX, Boleto e Cartão de Crédito) através da API do Mercado Pago, utilizando **FastAPI** como backend e **Jinja2** para a renderização de templates HTML.
+O **Checkout Mercado Pago** é um projeto de estudo focado na integração com a API de pagamentos do Mercado Pago. Desenvolvido com **FastAPI** e **Python**, este sistema demonstra como implementar um gateway de pagamento completo, suportando múltiplos métodos de pagamento incluindo PIX, Cartão de Crédito e Boleto Bancário.
 
-## 📖 Sobre o Projeto
+### ✨ Principais Características
 
-Este repositório foi desenvolvido como uma ferramenta de aprendizado para compreender o fluxo de comunicação com uma API de pagamentos externa. O objetivo principal foi construir um cliente Python robusto e modular, capaz de gerenciar as três formas de pagamento mais populares no Brasil, expondo-as através de uma interface web simples e funcional.
+- 🎯 **Múltiplos Métodos de Pagamento**: PIX, Cartão de Crédito e Boleto
+- 🔒 **Integração Segura**: Utiliza tokens e chaves de acesso do Mercado Pago
+- 📱 **Interface Responsiva**: Checkout moderno com Tailwind CSS
+- 🔄 **Webhooks**: Sistema de notificações automáticas para atualizações de status
+- 📊 **Persistência de Dados**: Armazenamento de transações com SQLAlchemy
+- 🏗️ **Arquitetura Modular**: Separação clara de responsabilidades
 
-O projeto simula um checkout básico, onde o usuário pode escolher o método de pagamento e visualizar o resultado da transação gerado pela API do Mercado Pago.
+## 🛠️ Tecnologias Utilizadas
 
----
+- **Backend**: Python 3.11+, FastAPI
+- **Banco de Dados**: SQLAlchemy, Alembic (Migrations)
+- **Frontend**: HTML5, Tailwind CSS, JavaScript
+- **HTTP Client**: HTTPX (async)
+- **Validação**: Pydantic
+- **Gateway**: Mercado Pago API
 
-## ✨ Principais Funcionalidades
+## 🚀 Funcionalidades
 
-* **Pagamento com PIX:** Geração de QR Code e código "Copia e Cola" com tempo de expiração.
-* **Pagamento com Boleto Bancário:** Geração de boleto com informações do pagador e data de vencimento.
-* **Pagamento com Cartão de Crédito:** Processamento de pagamento com validação de dados do cartão, incluindo nome do titular e CPF.
-* **Notificações via Webhooks:** Endpoint dedicado para receber e processar notificações do Mercado Pago, atualizando o status do pagamento (aprovado, recusado, cancelado) em tempo real no banco de dados.
-* **Interface Web Simples:** Um frontend básico criado com HTML e Jinja2 para interagir com o backend.
-* **Serviço Modular:** A lógica de comunicação com o Mercado Pago está encapsulada na classe `MercadoPagoService`, facilitando a manutenção e o reuso do código.
+### 💰 Métodos de Pagamento
+
+#### PIX
+- ✅ Geração de QR Code automática
+- ✅ Expiração configurável (30 minutos)
+- ✅ Notificação em tempo real
+
+#### 💳 Cartão de Crédito
+- ✅ Tokenização segura do cartão
+- ✅ Parcelamento configurável
+- ✅ Validação de dados do cartão
+- ✅ Aprovação/Rejeição instantânea
+
+#### 📄 Boleto Bancário
+- ✅ Geração automática do boleto
+- ✅ Dados completos do pagador
+- ✅ Prazo de vencimento configurável
+
+### 🔧 Recursos Técnicos
+
+- **API RESTful** com documentação automática (Swagger)
+- **Sistema de Webhooks** para notificações do Mercado Pago
+- **Validação robusta** de dados com Pydantic
+- **Tratamento de erros** personalizado
+- **Logs detalhados** para debugging
+- **Ambiente de desenvolvimento** completo
 
 ## 🎣 Webhooks: Recebendo Notificações em Tempo Real
 
@@ -49,78 +85,219 @@ A aplicação:
 
 ✅ Esse mecanismo garante que o **status dos pagamentos** em nosso sistema esteja **sempre sincronizado** com o Mercado Pago, **sem a necessidade de consultar a API repetidamente**.
 
+## � Estrutura do Projeto
+
+```
+├── app/
+│   ├── __init__.py
+│   ├── main.py              # Aplicação principal FastAPI
+│   ├── settings.py          # Configurações e variáveis de ambiente
+│   ├── database.py          # Configuração do banco de dados
+│   ├── dependencies.py      # Dependências injetáveis
+│   └── migrations/          # Migrações do Alembic
+├── payments/
+│   ├── __init__.py
+│   ├── models.py           # Modelos SQLAlchemy
+│   ├── schemas.py          # Schemas Pydantic
+│   └── router.py           # Rotas de pagamento
+├── services/
+│   ├── __init__.py
+│   └── mercadopago.py      # Serviço de integração MP
+├── templates/
+│   └── checkout.html       # Interface de checkout
+├── requirements.txt        # Dependências do projeto
+├── pyproject.toml         # Configurações do projeto
+└── alembic.ini           # Configuração do Alembic
+```
+
+## ⚙️ Configuração do Ambiente
+
+### 1. Clone o repositório
+```bash
+git clone https://github.com/Kauanrodrigues01/integracao-pagamento-mercado-pago.git
+cd integracao-pagamento-mercado-pago
+```
+
+### 2. Crie um ambiente virtual
+```bash
+python -m venv venv
+# Windows
+venv\Scripts\activate
+# Linux/Mac
+source venv/bin/activate
+```
+
+### 3. Instale as dependências
+```bash
+pip install -r requirements.txt
+```
+
+### 4. Configure as variáveis de ambiente
+Crie um arquivo `.env` na raiz do projeto:
+
+```env
+# Credenciais do Mercado Pago (Sandbox)
+MP_PUBLIC_KEY=your_public_key_here
+MP_ACCESS_TOKEN=your_access_token_here
+
+# URLs de configuração
+MP_BASE_API_URL=https://api.mercadopago.com
+NOTIFICATION_URL=https://your-domain.com/payments/notification
+
+# Configurações gerais
+DEFAULT_TIMEZONE=America/Sao_Paulo
+DATABASE_URL=sqlite:///./database.db
+```
+
+### 5. Execute as migrações
+```bash
+alembic upgrade head
+```
+
+### 6. Inicie o servidor
+```bash
+uvicorn app.main:app --reload
+```
+
+## � Obtendo Credenciais do Mercado Pago
+
+1. Acesse o [Portal de Desenvolvedores do Mercado Pago](https://www.mercadopago.com.br/developers)
+2. Crie uma conta ou faça login
+3. Acesse "Suas aplicações" > "Criar aplicação"
+4. Obtenha suas credenciais de **teste**:
+   - **Public Key**: Para operações no frontend
+   - **Access Token**: Para operações no backend
+
+> ⚠️ **Importante**: Este projeto está configurado para o ambiente de **teste** (sandbox) do Mercado Pago.
+
+## 📡 Endpoints da API
+
+### Pagamentos
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `POST` | `/payments/checkout/pix` | Criar pagamento PIX |
+| `POST` | `/payments/checkout/boleto` | Criar pagamento Boleto |
+| `POST` | `/payments/checkout/card` | Criar pagamento Cartão |
+| `POST` | `/payments/notification` | Webhook para notificações |
+| `GET` | `/payments/list` | Listar todos os pagamentos |
+| `DELETE` | `/payments/delete/{id}` | Deletar pagamento |
+
+### Interface
+
+| Método | Endpoint | Descrição |
+|--------|----------|-----------|
+| `GET` | `/` | Página de checkout |
+| `GET` | `/docs` | Documentação da API (Swagger) |
+
+## 🧪 Testando o Sistema
+
+### 1. Acesse a interface de checkout
+```
+http://localhost:8000
+```
+
+### 2. Dados de teste para Cartão de Crédito
+
+**Cartão Aprovado**:
+- Número: `5031433215406351`
+- Vencimento: `11/2030`
+- CVV: `143`
+- Nome: `Test User`
+
+**Cartão Rejeitado**:
+- Número: `5031433215406351`
+- Vencimento: `11/2030`
+- CVV: `143`
+- Nome: `Other User`
+
+### 3. Dados de teste para PIX e Boleto
+- **CPF**: `12345678909`
+- **Email**: `test@test.com`
+
+## 📊 Fluxo de Pagamento
+
+```mermaid
+sequenceDiagram
+    participant U as Usuário
+    participant F as Frontend
+    participant B as Backend
+    participant MP as Mercado Pago
+    participant DB as Database
+
+    U->>F: Seleciona método e preenche dados
+    F->>B: POST /payments/checkout/{method}
+    B->>MP: Cria pagamento
+    MP->>B: Retorna resposta
+    B->>DB: Salva transação
+    B->>F: Retorna resultado
+    F->>U: Exibe status/redirect
+    
+    Note over MP,B: Webhook para atualizações
+    MP->>B: POST /payments/notification
+    B->>DB: Atualiza status
+```
+
+## 🎨 Interface do Usuário
+
+A interface de checkout foi desenvolvida com foco na experiência do usuário:
+
+- **Design Responsivo**: Funciona em desktop e mobile
+- **Validação em Tempo Real**: Feedback imediato para o usuário
+- **Estados Visuais**: Loading, sucesso e erro
+- **Múltiplos Métodos**: Alternância fluida entre PIX, Cartão e Boleto
+
+## 🐛 Tratamento de Erros
+
+O sistema inclui tratamento robusto de erros:
+
+- **Validação de Dados**: Pydantic schemas
+- **Erros da API**: Mapeamento de códigos de erro do MP
+- **Timeouts**: Configuração de timeout para requisições
+- **Logs**: Sistema de logging para debugging
+
+## 📈 Status de Pagamento
+
+| Status | Descrição |
+|--------|-----------|
+| `pending` | Pagamento pendente |
+| `approved` | Pagamento aprovado |
+| `rejected` | Pagamento rejeitado |
+| `cancelled` | Pagamento cancelado |
+
+## 🔮 Próximos Passos
+
+- [ ] Implementar testes unitários
+- [ ] Adicionar autenticação de usuários
+- [ ] Dashboard administrativo
+- [ ] Relatórios de transações
+- [ ] Integração com outros gateways
+- [ ] Dockerização do projeto
+
+## 🤝 Contribuindo
+
+1. Faça um fork do projeto
+2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+## 👨‍💻 Autor
+
+**Kauan Rodrigues**
+- GitHub: [@Kauanrodrigues01](https://github.com/Kauanrodrigues01)
+
 ---
 
-## 🛠️ Tecnologias Utilizadas
+⭐ **Deixe uma estrela se este projeto te ajudou!**
 
-![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
-![FastAPI](https://img.shields.io/badge/FastAPI-005571?style=for-the-badge&logo=fastapi)
-![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white)
-![SQLalchemy](https://img.shields.io/badge/sqlalchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white)
-![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)
-![Jinja](https://img.shields.io/badge/-Jinja-4B0082?logo=jinja&logoColor=white&style=flat)
-![HTML5](https://img.shields.io/badge/HTML5-E34F26?style=for-the-badge&logo=html5&logoColor=white)
-![CSS3](https://img.shields.io/badge/CSS3-1572B6?style=for-the-badge&logo=css3&logoColor=white)
-![JavaScript](https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+## 📚 Recursos Úteis
 
----
-
-## 🚀 Como Executar o Projeto Localmente
-
-Siga os passos abaixo para rodar a aplicação em sua máquina.
-
-### Pré-requisitos
-
-* [Git](https://git-scm.com/)
-* [Python 3.9+](https://www.python.org/downloads/)
-* Um gerenciador de pacotes como `pip`
-
-### Passos
-
-1.  **Clone o repositório:**
-    ```sh
-    git clone [https://github.com/Kauanrodrigues01/integracao-pagamento-mercado-pago.git](https://github.com/Kauanrodrigues01/checkout-mercado-pago.git)
-    ```
-
-2.  **Acesse o diretório do projeto:**
-    ```sh
-    cd integracao-pagamento-mercado-pago
-    ```
-
-3.  **Crie e ative um ambiente virtual (Recomendado):**
-    ```sh
-    # Para Windows
-    python -m venv venv
-    .\venv\Scripts\activate
-
-    # Para macOS/Linux
-    python3 -m venv venv
-    source venv/bin/activate
-    ```
-
-4.  **Instale as dependências necessárias:**
-    ```sh
-    pip install -r requirements.txt
-    ```
-
-5.  **Configure as variáveis de ambiente:**
-    Crie um arquivo chamado `.env` na raiz do projeto, copiando o conteúdo do arquivo `.env.example` (se houver) ou usando o modelo abaixo. Você precisará do seu **Access Token** de testes do Mercado Pago.
-
-    ```ini
-    # Arquivo .env
-    MP_PUBLIC_KEY=your-public-key-here
-    MP_ACCESS_TOKEN=your-access-token-here
-    MP_BASE_API_URL=https://api.mercadopago.com
-    DEFAULT_TIMEZONE=America/Fortaleza
-    NOTIFICATION_URL=https://your-domain.com.br/api/notifications
-    DATABASE_URL=postgresql+asyncpg://admin:senha123@localhost:5432/meubanco
-    ```
-
-6.  **Inicie o servidor local:**
-    ```sh
-    uvicorn main:app --reload
-    ```
-
-7.  Abra seu navegador e acesse [http://127.0.0.1:8000](http://127.0.0.1:8000) para ver a aplicação funcionando.
-
----
+- [Documentação do Mercado Pago](https://www.mercadopago.com.br/developers/pt/docs)
+- [FastAPI Documentation](https://fastapi.tiangolo.com/)
+- [SQLAlchemy Documentation](https://docs.sqlalchemy.org/)
+- [Pydantic Documentation](https://docs.pydantic.dev/)
