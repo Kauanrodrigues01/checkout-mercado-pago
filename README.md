@@ -1,9 +1,13 @@
 # 💳 Checkout Mercado Pago
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)
-![FastAPI](https://img.shields.io/badge/FastAPI-0.115.12-green.svg)
-![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-2.0.41-red.svg)
-![License](https://img.shields.io/badge/License-MIT-yellow.svg)
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+  <img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+  <img src="https://img.shields.io/badge/SQLAlchemy-D71F00?style=for-the-badge&logo=sqlalchemy&logoColor=white" />
+  <img src="https://img.shields.io/badge/Jinja2-EE6C4D?style=for-the-badge&logo=jinja&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-316192?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Mercado%20Pago-00B1EA?style=for-the-badge&logo=paypal&logoColor=white" />
+</p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/Kauanrodrigues01/Kauanrodrigues01/refs/heads/main/images/projetos/checkout-mercado-pago/checkout-cartao.png" width="49%">
@@ -22,7 +26,7 @@ O **Checkout Mercado Pago** é um projeto de estudo focado na integração com a
 
 - 🎯 **Múltiplos Métodos de Pagamento**: PIX, Cartão de Crédito e Boleto
 - 🔒 **Integração Segura**: Utiliza tokens e chaves de acesso do Mercado Pago
-- 📱 **Interface Responsiva**: Checkout moderno com Tailwind CSS
+- 📱 **Interface Responsiva**: Checkout moderno com Jinja2, HTML, CSS, Javascript 
 - 🔄 **Webhooks**: Sistema de notificações automáticas para atualizações de status
 - 📊 **Persistência de Dados**: Armazenamento de transações com SQLAlchemy
 - 🏗️ **Arquitetura Modular**: Separação clara de responsabilidades
@@ -31,9 +35,7 @@ O **Checkout Mercado Pago** é um projeto de estudo focado na integração com a
 
 - **Backend**: Python 3.11+, FastAPI
 - **Banco de Dados**: SQLAlchemy, Alembic (Migrations)
-- **Frontend**: HTML5, Tailwind CSS, JavaScript
-- **HTTP Client**: HTTPX (async)
-- **Validação**: Pydantic
+- **Frontend**: HTML5, CSS, JavaScript, Jinja2
 - **Gateway**: Mercado Pago API
 
 ## 🚀 Funcionalidades
